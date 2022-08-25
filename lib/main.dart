@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:waf_code_challenge/common/themes/app_theme.dart';
 
 import 'home_page.dart';
 
@@ -13,10 +14,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      theme: context.lightThemeData(), // 👈 default theme (light)
+      darkTheme: context.darkThemeData(),
+      home: const MyHomePage(title: 'Harrypotter'),
     );
   }
 }
