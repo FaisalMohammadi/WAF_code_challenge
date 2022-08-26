@@ -5,10 +5,17 @@ import 'package:waf_code_challenge/common/themes/app_theme.dart';
 import 'package:waf_code_challenge/features/shopping/pages/books_list_page.dart';
 import 'package:waf_code_challenge/features/shopping/provider/shopping_card_service.dart';
 
+import 'common/preferences/preferences.dart';
 import 'home_page.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  /// initializes the dependency injection
   await initDependencies();
+
+  /// initializes the shared preferences
+  await Preferences.initialize();
   runApp(const MyApp());
 }
 
