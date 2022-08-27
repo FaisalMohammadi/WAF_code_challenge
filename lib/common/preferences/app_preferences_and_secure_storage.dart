@@ -4,14 +4,19 @@ import 'preferences.dart';
 
 class AppPreferencesAndSecureStorage {
   /// gets the auth-info
-  static BookModel? getBooksInfo() {
-    Map<String, dynamic> jsonResult = Preferences.getbookModel<BookModel>("books_info");
-    BookModel booksInfo = BookModel.fromMap(jsonResult);
-    return booksInfo;
+  static List<BookModel>? getBooksInfo() {
+    List<BookModel>? booksListFromPrefs = [];
+    List<dynamic>? jsonResult =
+        Preferences.getbookModel<BookModel>("books_info");
+
+    if (jsonResult != null) {
+      booksListFromPrefs = jsonResult.map<BookModel>((items) => BookModel.fromJson(items)).toList();
+    }
+    return booksListFromPrefs;
   }
 
   /// sets the auth-info
-  static void setBookInfo(BookModel? booksInfo) {
+  static void setBookInfo(List<BookModel>? booksInfo) {
     Preferences.setBookModel<BookModel>("books_info", booksInfo);
   }
 
@@ -20,7 +25,11 @@ class AppPreferencesAndSecureStorage {
     return Preferences.getInt("shopping_card_counter");
   }
 
-  static void setShoppingCardCounter(bool shoppingCardCounter) {
-    return Preferences.setBool("shopping_card_counter", shoppingCardCounter);
+  static void setShoppingCardCounter(int shoppingCardCounter) {
+    return Preferences.setInt("shopping_card_counter", shoppingCardCounter);
+  }
+
+  static void emptySharedPrefs() {
+    Preferences.clear();
   }
 }

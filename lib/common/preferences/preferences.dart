@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../features/models/book_model.dart';
+
 /// provides functionality to load and save preferences
 class Preferences {
 
@@ -99,7 +101,7 @@ class Preferences {
       Object? result = serializers.serializeWith<T>(serializer, value); */
       //print("22222 is ${value}");
 
-      Map<String,dynamic> result =  jsonDecode(value!);
+      List<dynamic> result =  jsonDecode(value!);
       return result;
     } catch (error) {
       print(error);
@@ -108,7 +110,8 @@ class Preferences {
   }
 
   /// serializes given client-api-model and sets it as string preference
-  static void setBookModel<T>(String key, T? value) {
+  static void setBookModel<T>(String key, List<T>? value) {
+    
     // check value
     /* if (value == null) {
       (await preferences).remove(key);
