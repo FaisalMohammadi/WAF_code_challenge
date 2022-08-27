@@ -71,12 +71,15 @@ class BookListItem extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Flexible(
-                          child: Text(
-                            textAlign: TextAlign.start,
-                            book.title!,
-                            style: Theme.of(context).textTheme.titleLarge,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 15),
+                            child: Text(
+                              textAlign: TextAlign.start,
+                              book.title!,
+                              style: Theme.of(context).textTheme.titleLarge,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                            ),
                           ),
                         ),
                         Flexible(

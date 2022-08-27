@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Demo',
         theme: context.lightThemeData(context), // 👈 default theme (light)
         darkTheme: context.darkThemeData(context),
+        themeMode: ThemeMode.light,
         home: const BooksListPage(),
       ),
     );
