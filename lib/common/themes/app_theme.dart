@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 /// Theme data for project.
@@ -12,8 +13,9 @@ extension AppTheme on BuildContext {
   static Color darkestBlue = HexColor("001d3d");
 
   /// Styles for the light theme.
-  ThemeData lightThemeData() {
+  ThemeData lightThemeData(BuildContext context) {
     return ThemeData(
+      textTheme: GoogleFonts.nunitoTextTheme(Theme.of(context).textTheme),
       cardTheme: const CardTheme(surfaceTintColor: Colors.white),
       appBarTheme: AppBarTheme(
         color: primaryColor,
@@ -35,7 +37,7 @@ extension AppTheme on BuildContext {
   }
 
   /// Styles for the dark theme.
-  ThemeData darkThemeData() {
+  ThemeData darkThemeData(BuildContext context) {
     return ThemeData(
       colorSchemeSeed: primaryColor,
       brightness: Brightness.light,
