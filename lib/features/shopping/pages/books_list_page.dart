@@ -2,19 +2,32 @@ import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:waf_code_challenge/common/constants/book_listk.dart';
+import 'package:waf_code_challenge/common/di/di.dart';
+import 'package:waf_code_challenge/common/preferences/app_preferences_and_secure_storage.dart';
 import 'package:waf_code_challenge/features/models/book_model.dart';
 import 'package:waf_code_challenge/features/shopping/components/book_list_item.dart';
+import 'package:waf_code_challenge/features/shopping/components/shopping_card_item.dart';
 import 'package:waf_code_challenge/features/shopping/pages/shopping_card_page.dart';
 import 'package:waf_code_challenge/features/shopping/provider/shopping_card_service.dart';
+
+import '../../models/shopping_card_model.dart';
 
 class BooksListPage extends StatelessWidget {
   const BooksListPage({Key? key}) : super(key: key);
   final double shoppingCardIconSize = 30;
   @override
   Widget build(BuildContext context) {
+    ShoppingCardService shoppingCardService =
+        Provider.of<ShoppingCardService>(context);
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         actions: [
+          IconButton(
+              onPressed: () {
+                AppPreferencesAndSecureStorage.emptySharedPrefs();
+              },
+              icon: Icon(Icons.delete)),
           Padding(
             padding: const EdgeInsets.only(right: 20),
             child: Badge(
@@ -50,18 +63,43 @@ class BooksListPage extends StatelessWidget {
         itemCount: BookListk.books.length,
         itemBuilder: (context, index) {
           BookModel bookItem = BookListk.books[index];
-          return BookListItem(
+          ShoppingCardModel shoppingCardModel = ShoppingCardModel(
+              book: bookItem,
+              amount: shoppingCardService.getShoppingCardListItemCounter(bookItem));
+          return //ShoppingCardItem(book: shoppingCardModel);
+              BookListItem(
             book: bookItem,
             bookListItemAddToCardButton:
-                buildShoppingCardBookListItemButtom(context, bookItem),
+                buildBookListItemButtom(context, bookItem, shoppingCardModel),
           );
         },
       ),
     );
   }
 
-  Widget buildShoppingCardBookListItemButtom(
-      BuildContext context, BookModel book) {
+  void bookListItemButtomOnTap(ShoppingCardModel book) {
+    ShoppingCardService shoppingCardService =
+        locator.get<ShoppingCardService>();
+
+    List<BookModel> shppingCardListUnarranged =
+        shoppingCardService.getShoppingCardItemsUnarranged();
+
+    List<ShoppingCardModel> shoppingCardItems =
+        shoppingCardService.getShoppingCardItems();
+
+    if (!shppingCardListUnarranged.contains(book.book) ||
+        shoppingCardItems.isEmpty) {
+      shoppingCardService.setShoppingCardItems(book);
+      shoppingCardService.addShoppingCardCounter();
+      shoppingCardService.addShoppingCardListItemCounter();
+    } else {
+      shoppingCardService.addShoppingCardListItemCounter();
+    }
+    shoppingCardService.setShoppingCardItemsUnarranged(book.book!);
+  }
+
+  Widget buildBookListItemButtom(BuildContext context, BookModel book,
+      ShoppingCardModel shoppingCardModel) {
     return Flexible(
       child: Padding(
         padding: const EdgeInsets.only(bottom: 5),
@@ -69,7 +107,7 @@ class BooksListPage extends StatelessWidget {
           alignment: Alignment.bottomRight,
           child: InkWell(
             borderRadius: BorderRadius.circular(10),
-            onTap: () {},
+            onTap: () => bookListItemButtomOnTap(shoppingCardModel),
             child: Container(
               decoration: BoxDecoration(
                 color: Theme.of(context)
