@@ -63,23 +63,25 @@ class BooksListPage extends StatelessWidget {
         itemCount: BookListk.books.length,
         itemBuilder: (context, index) {
           BookModel bookItem = BookListk.books[index];
-          ShoppingCardModel shoppingCardModel = ShoppingCardModel(
-              book: bookItem,
-              amount: shoppingCardService.getShoppingCardListItemCounter(bookItem));
+
           return //ShoppingCardItem(book: shoppingCardModel);
               BookListItem(
             book: bookItem,
             bookListItemAddToCardButton:
-                buildBookListItemButtom(context, bookItem, shoppingCardModel),
+                buildBookListItemButtom(context, bookItem),
           );
         },
       ),
     );
   }
 
-  void bookListItemButtomOnTap(ShoppingCardModel book) {
+  void bookListItemButtomOnTap(BookModel book) {
     ShoppingCardService shoppingCardService =
         locator.get<ShoppingCardService>();
+
+    ShoppingCardModel shoppingCardModel = ShoppingCardModel(
+        book: book,
+        amount: shoppingCardService.getShoppingCardListItemCounter(book) + 1);
 
     List<BookModel> shppingCardListUnarranged =
         shoppingCardService.getShoppingCardItemsUnarranged();
@@ -87,19 +89,20 @@ class BooksListPage extends StatelessWidget {
     List<ShoppingCardModel> shoppingCardItems =
         shoppingCardService.getShoppingCardItems();
 
-    if (!shppingCardListUnarranged.contains(book.book) ||
+    if (!shppingCardListUnarranged.contains(book) ||
         shoppingCardItems.isEmpty) {
-      shoppingCardService.setShoppingCardItems(book);
+      shoppingCardService.setShoppingCardItems(shoppingCardModel);
       shoppingCardService.addShoppingCardCounter();
       shoppingCardService.addShoppingCardListItemCounter();
     } else {
+      shoppingCardService.setShoppingCardItems(shoppingCardModel);
+
       shoppingCardService.addShoppingCardListItemCounter();
     }
-    shoppingCardService.setShoppingCardItemsUnarranged(book.book!);
+    shoppingCardService.setShoppingCardItemsUnarranged(book);
   }
 
-  Widget buildBookListItemButtom(BuildContext context, BookModel book,
-      ShoppingCardModel shoppingCardModel) {
+  Widget buildBookListItemButtom(BuildContext context, BookModel book) {
     return Flexible(
       child: Padding(
         padding: const EdgeInsets.only(bottom: 5),
@@ -107,7 +110,7 @@ class BooksListPage extends StatelessWidget {
           alignment: Alignment.bottomRight,
           child: InkWell(
             borderRadius: BorderRadius.circular(10),
-            onTap: () => bookListItemButtomOnTap(shoppingCardModel),
+            onTap: () => bookListItemButtomOnTap(book),
             child: Container(
               decoration: BoxDecoration(
                 color: Theme.of(context)

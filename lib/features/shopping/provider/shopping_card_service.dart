@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:injectable/injectable.dart';
 import 'package:waf_code_challenge/common/preferences/app_preferences_and_secure_storage.dart';
 import 'package:waf_code_challenge/features/models/book_model.dart';
+import 'package:waf_code_challenge/features/models/shopping_card_model.dart';
+import 'package:waf_code_challenge/features/shopping/components/shopping_card_item.dart';
 
 @singleton
 class ShoppingCardService with ChangeNotifier {
@@ -9,7 +11,8 @@ class ShoppingCardService with ChangeNotifier {
   int _shoppingCardListItemCounter = 0;
   int get shoppingCardCounter => _shoppingCardCounter;
 
-  List<BookModel> _shoppingCardItems = [];
+  List<ShoppingCardModel> _shoppingCardItems = [];
+  List<BookModel> _shoppingCardItemsUnarranged = [];
 
   int getShoppingCardCounter() {
     _getPreferencesItems();
@@ -22,20 +25,46 @@ class ShoppingCardService with ChangeNotifier {
     notifyListeners();
   }
 
-  List<BookModel> getShoppingCardItems() {
+  List<ShoppingCardModel> getShoppingCardItems() {
     _getPreferencesItems();
     return _shoppingCardItems;
   }
 
-  void setShoppingCardItems(BookModel item) {
-    _shoppingCardItems.add(item);
+  List<BookModel> getShoppingCardItemsUnarranged() {
+    _getPreferencesItems();
+    return _shoppingCardItemsUnarranged;
+  }
+
+  void setShoppingCardItems(ShoppingCardModel item) {
+    if (_shoppingCardItems.any((element) => element.book == item.book)) {
+      int index =
+          _shoppingCardItems.indexWhere((element) => element.book == item.book);
+      _shoppingCardItems[index] = item;
+    } else {
+      _shoppingCardItems.add(item);
+    }
     _setPreferencesItems();
     notifyListeners();
   }
 
-  int getShoppingCardListItemCounter() {
+  void setShoppingCardItemsUnarranged(BookModel item) {
+    _shoppingCardItemsUnarranged.add(item);
+    _setPreferencesItems();
+    notifyListeners();
+  }
+
+  int getShoppingCardListItemCounter(BookModel bookItem) {
     _getPreferencesItems();
-    return _shoppingCardListItemCounter;
+    if (_shoppingCardItems.isNotEmpty) {
+      int? counter = _shoppingCardItems
+          .firstWhere((element) => element.book == bookItem,
+              orElse: () => ShoppingCardModel(amount: null))
+          .amount;
+
+      return counter ?? 0;
+    } else {
+      return 0;
+    }
   }
 
   void addShoppingCardListItemCounter() {
@@ -43,30 +72,43 @@ class ShoppingCardService with ChangeNotifier {
     _setPreferencesItems();
     notifyListeners();
   }
+
   void subtractShoppingCardListItemCounter() {
     _shoppingCardListItemCounter--;
     _setPreferencesItems();
     notifyListeners();
   }
 
-
-
   void _getPreferencesItems() {
     if (AppPreferencesAndSecureStorage.getShoppingCardCounter() != null) {
       _shoppingCardCounter =
           AppPreferencesAndSecureStorage.getShoppingCardCounter()!;
     }
+
+    if (AppPreferencesAndSecureStorage.getBooksInfoUnarranged() != null) {
+      _shoppingCardItemsUnarranged =
+          AppPreferencesAndSecureStorage.getBooksInfoUnarranged()!;
+    }
+
     if (AppPreferencesAndSecureStorage.getBooksInfo() != null) {
       _shoppingCardItems = AppPreferencesAndSecureStorage.getBooksInfo()!;
     }
-    if (AppPreferencesAndSecureStorage.getShoppingCardListItemCounter() != null) {
-      _shoppingCardListItemCounter = AppPreferencesAndSecureStorage.getShoppingCardListItemCounter()!;
+
+    if (AppPreferencesAndSecureStorage.getShoppingCardListItemCounter() !=
+        null) {
+      _shoppingCardListItemCounter =
+          AppPreferencesAndSecureStorage.getShoppingCardListItemCounter()!;
     }
   }
 
   void _setPreferencesItems() {
     AppPreferencesAndSecureStorage.setShoppingCardCounter(_shoppingCardCounter);
+
     AppPreferencesAndSecureStorage.setBookInfo(_shoppingCardItems);
-    AppPreferencesAndSecureStorage.setShoppingCardListItemCounter(_shoppingCardListItemCounter);
+    AppPreferencesAndSecureStorage.setBookInfoUnarranged(
+        _shoppingCardItemsUnarranged);
+
+    AppPreferencesAndSecureStorage.setShoppingCardListItemCounter(
+        _shoppingCardListItemCounter);
   }
 }
