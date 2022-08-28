@@ -5,7 +5,7 @@ import 'package:hexcolor/hexcolor.dart';
 /// Theme data for project.
 extension AppTheme on BuildContext {
   static Color primaryColor = HexColor("5A6BF2");
-  
+
   //HexColor("27618E");
   static Color darkBlue = HexColor("27618E");
   static Color purpleBlue = HexColor("5A6BF2");
@@ -18,10 +18,13 @@ extension AppTheme on BuildContext {
       textTheme: GoogleFonts.nunitoTextTheme(Theme.of(context).textTheme),
       cardTheme: const CardTheme(surfaceTintColor: Colors.white),
       appBarTheme: AppBarTheme(
+          color: primaryColor,
+          centerTitle: true,
+          actionsIconTheme: const IconThemeData(color: Colors.white),
+          titleTextStyle: const TextStyle(color: Colors.white, fontSize: 22),
+          iconTheme: IconThemeData(color: Colors.white)),
+      iconTheme: IconThemeData(
         color: primaryColor,
-        centerTitle: true,
-        actionsIconTheme: const IconThemeData(color: Colors.white),
-        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 19)
       ),
       colorSchemeSeed: primaryColor,
       brightness: Brightness.light,
@@ -39,7 +42,7 @@ extension AppTheme on BuildContext {
   /// Styles for the dark theme.
   ThemeData darkThemeData(BuildContext context) {
     return ThemeData(
-      colorSchemeSeed: primaryColor,
+      colorSchemeSeed: darkestBlue,
       brightness: Brightness.light,
       useMaterial3: true,
       elevatedButtonTheme: ElevatedButtonThemeData(
