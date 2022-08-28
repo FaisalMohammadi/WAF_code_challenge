@@ -59,18 +59,21 @@ class BooksListPage extends StatelessWidget {
         ],
         title: const Text("Harry Potter"),
       ),
-      body: ListView.builder(
-        itemCount: BookListk.books.length,
-        itemBuilder: (context, index) {
-          BookModel bookItem = BookListk.books[index];
+      body: Padding(
+        padding: const EdgeInsets.all(10),
+        child: ListView.builder(
+          itemCount: BookListk.books.length,
+          itemBuilder: (context, index) {
+            BookModel bookItem = BookListk.books[index];
 
-          return //ShoppingCardItem(book: shoppingCardModel);
-              BookListItem(
-            book: bookItem,
-            bookListItemAddToCardButton:
-                buildBookListItemButtom(context, bookItem),
-          );
-        },
+            return //ShoppingCardItem(book: shoppingCardModel);
+                BookListItem(
+              book: bookItem,
+              bookListItemAddToCardButton:
+                  buildBookListItemButtom(context, bookItem),
+            );
+          },
+        ),
       ),
     );
   }
@@ -83,22 +86,8 @@ class BooksListPage extends StatelessWidget {
         book: book,
         amount: shoppingCardService.getShoppingCardListItemCounter(book) + 1);
 
-    List<BookModel> shppingCardListUnarranged =
-        shoppingCardService.getShoppingCardItemsUnarranged();
-
-    List<ShoppingCardModel> shoppingCardItems =
-        shoppingCardService.getShoppingCardItems();
-
-    if (!shppingCardListUnarranged.contains(book) ||
-        shoppingCardItems.isEmpty) {
-      shoppingCardService.setShoppingCardItems(shoppingCardModel);
-      shoppingCardService.addShoppingCardCounter();
-      shoppingCardService.addShoppingCardListItemCounter();
-    } else {
-      shoppingCardService.setShoppingCardItems(shoppingCardModel);
-
-      shoppingCardService.addShoppingCardListItemCounter();
-    }
+    shoppingCardService.setShoppingCardItems(shoppingCardModel);
+    shoppingCardService.addShoppingCardListItemCounter();
     shoppingCardService.setShoppingCardItemsUnarranged(book);
   }
 
@@ -132,8 +121,10 @@ class BooksListPage extends StatelessWidget {
                   Flexible(
                     child: Text(
                       '${book.price.toString()} €',
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).primaryColor),
                     ),
                   ),
                 ],
