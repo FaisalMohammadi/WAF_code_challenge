@@ -3,13 +3,13 @@ import 'package:injectable/injectable.dart';
 import 'package:waf_code_challenge/common/preferences/app_preferences_and_secure_storage.dart';
 import 'package:waf_code_challenge/features/models/book_model.dart';
 import 'package:waf_code_challenge/features/models/shopping_card_model.dart';
-import 'package:waf_code_challenge/features/shopping/components/shopping_card_item.dart';
 
 @singleton
 class ShoppingCardService with ChangeNotifier {
   int _shoppingCardCounter = 0;
   int _shoppingCardListItemCounter = 0;
   int get shoppingCardCounter => _shoppingCardCounter;
+  double _shoppingCardTotalAmount = 0;
 
   List<ShoppingCardModel> _shoppingCardItems = [];
   List<BookModel> _shoppingCardItemsUnarranged = [];
@@ -17,12 +17,6 @@ class ShoppingCardService with ChangeNotifier {
   int getShoppingCardCounter() {
     _getPreferencesItems();
     return _shoppingCardCounter;
-  }
-
-  void addShoppingCardCounter() {
-    _shoppingCardCounter++;
-    _setPreferencesItems();
-    notifyListeners();
   }
 
   List<ShoppingCardModel> getShoppingCardItems() {
@@ -35,16 +29,39 @@ class ShoppingCardService with ChangeNotifier {
     return _shoppingCardItemsUnarranged;
   }
 
+  double getShoppingCardTotalAmount() {
+    double totalAmount = 0;
+    double bookPrice = 0;
+    int bookAmount = 0;
+
+    for (int i = 0; i < _shoppingCardItems.length; i++) {
+      bookPrice = _shoppingCardItems[i].book!.price!;
+      bookAmount = _shoppingCardItems[i].amount!;
+
+      totalAmount += (bookPrice * bookAmount);
+    }
+    _shoppingCardTotalAmount = totalAmount;
+    return _shoppingCardTotalAmount;
+  }
+
   void setShoppingCardItems(ShoppingCardModel item) {
-    if (_shoppingCardItems.any((element) => element.book == item.book)) {
+    if (item.amount == 0) {
+      removeItemFromShoppingCard(item);
+    } else if (_shoppingCardItems.any((element) => element.book == item.book)) {
       int index =
           _shoppingCardItems.indexWhere((element) => element.book == item.book);
       _shoppingCardItems[index] = item;
     } else {
+      _shoppingCardCounter++;
       _shoppingCardItems.add(item);
     }
     _setPreferencesItems();
     notifyListeners();
+  }
+
+  void removeItemFromShoppingCard(ShoppingCardModel item) {
+    _shoppingCardItems.removeWhere((element) => element.book == item.book);
+    _shoppingCardCounter--;
   }
 
   void setShoppingCardItemsUnarranged(BookModel item) {
