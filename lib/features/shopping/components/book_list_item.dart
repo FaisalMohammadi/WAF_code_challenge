@@ -3,19 +3,21 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:waf_code_challenge/common/constants/book_listk.dart';
 
 import '../../models/book_model.dart';
+import '../../models/shopping_card_model.dart';
 
 class BookListItem extends StatelessWidget {
   final BookModel book;
   final Widget bookListItemAddToCardButton;
 
-  BookListItem({Key? key, required this.book, required this.bookListItemAddToCardButton}) : super(key: key);
+  const BookListItem(
+      {Key? key, required this.book, required this.bookListItemAddToCardButton})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Size screenSize = MediaQuery.of(context).size;
     return Padding(
-      padding: const EdgeInsets.all(
-          8), //EdgeInsets.only(left: 10, right: 10,top: 10),
+      padding: const EdgeInsets.only(
+          bottom: 8), //EdgeInsets.only(left: 10, right: 10,top: 10),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: Stack(
@@ -30,7 +32,7 @@ class BookListItem extends StatelessWidget {
                   color: Theme.of(context)
                       .colorScheme
                       .secondary
-                      .withOpacity(0.2), // TODO change the color
+                      .withOpacity(0.2),
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(
                       5,
@@ -52,7 +54,7 @@ class BookListItem extends StatelessWidget {
                     color: Colors.grey.withOpacity(0.1),
                     spreadRadius: 30,
                     blurRadius: 30,
-                    offset: Offset(0, 10), // changes position of shadow
+                    offset: const Offset(0, 10), // changes position of shadow
                   ),
                 ],
               ),
@@ -107,7 +109,6 @@ class CustomClipPath extends CustomClipper<Path> {
 
   @override
   Path getClip(Size size) {
-    final double startMargin = size.width / 14;
     Path path0 = Path();
     path0.moveTo(0, size.height * 0.0045);
     path0.lineTo(0, size.height);
