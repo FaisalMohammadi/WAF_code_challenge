@@ -64,7 +64,7 @@ class ShoppingCardPage extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 15, bottom: 15),
                     height: screenSize.height * 0.17,
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         buildPaymentOverviewSection(
@@ -80,10 +80,6 @@ class ShoppingCardPage extends StatelessWidget {
                           amount:
                               " - ${shoppingCardProvider.getAndCountShoppingCardDiscountAmount().toString()}",
                         ),
-                        buildPaymentOverviewSection(context,
-                            text: "Mwst:",
-                            amount: "+ 19",
-                            currencyOrPercentSign: " %"),
                       ],
                     ),
                   ),
