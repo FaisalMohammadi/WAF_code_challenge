@@ -6,6 +6,7 @@ import 'package:waf_code_challenge/common/widget/custom_seperator.dart';
 import 'package:waf_code_challenge/features/shopping/components/shopping_card_item.dart';
 import 'package:waf_code_challenge/features/shopping/provider/shopping_card_service.dart';
 
+import '../../../common/di/di.dart';
 import '../../models/book_model.dart';
 import '../../models/shopping_card_model.dart';
 import '../components/book_list_item.dart';
@@ -17,7 +18,8 @@ class ShoppingCardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ShoppingCardService shoppingCardProvider = Provider.of(context);
+    ShoppingCardService shoppingCardProvider =
+        Provider.of<ShoppingCardService>(context);
 
     Size screenSize = MediaQuery.of(context).size;
 
@@ -37,12 +39,24 @@ class ShoppingCardPage extends StatelessWidget {
                 children: [
                   SizedBox(
                     height: screenSize.height * 0.53,
-                    child: ListView.builder(
+                    child: ListView.separated(
+                      separatorBuilder: (context, index) => const SizedBox(
+                        height: 8,
+                      ),
                       itemCount: shoppingCardItems.length,
                       itemBuilder: (context, index) {
                         ShoppingCardModel bookItem = shoppingCardItems[index];
-                        return ShoppingCardItem(
-                            book: bookItem.book ?? BookModel());
+                        return Dismissible(
+                          resizeDuration: Duration(milliseconds: 500),
+                          onDismissed: (DismissDirection direction) =>
+                              onDisissItem(direction, bookItem),
+                          direction: DismissDirection.endToStart,
+                          key: ObjectKey(shoppingCardItems[index]),
+                          background: const SizedBox(),
+                          secondaryBackground: buildSwipeActionRight(),
+                          child: ShoppingCardItem(
+                              book: bookItem.book ?? BookModel()),
+                        );
                       },
                     ),
                   ),
@@ -55,19 +69,21 @@ class ShoppingCardPage extends StatelessWidget {
                       children: [
                         buildPaymentOverviewSection(
                           context,
-                          text: "Zwischenzumme:",
-                          amount: shoppingCardProvider.getShoppingCardTotalAmount().toString(),
+                          text: "Zwischensumme:",
+                          amount: shoppingCardProvider
+                              .getShoppingCardSubTotalAmount()
+                              .toString(),
                         ),
                         buildPaymentOverviewSection(
                           context,
                           text: "Rabatt:",
-                          amount: "- 20", // TODO
+                          amount:
+                              " - ${shoppingCardProvider.getAndCountShoppingCardDiscountAmount().toString()}",
                         ),
-                        buildPaymentOverviewSection(
-                          context,
-                          text: "Mwst:",
-                          amount: "+ 19", // TODO
-                        ),
+                        buildPaymentOverviewSection(context,
+                            text: "Mwst:",
+                            amount: "+ 19",
+                            currencyOrPercentSign: " %"),
                       ],
                     ),
                   ),
@@ -82,7 +98,7 @@ class ShoppingCardPage extends StatelessWidget {
                         buildPaymentOverviewSection(
                           context,
                           text: "Gesamt:",
-                          amount: "300", // TODO
+                          amount: shoppingCardProvider.getShoppingCardTotalAmount().toString(),
                         ),
                         ElevatedButton(
                           style: Theme.of(context).elevatedButtonTheme.style,
@@ -98,6 +114,41 @@ class ShoppingCardPage extends StatelessWidget {
                 ],
               ),
             ),
+    );
+  }
+
+  onDisissItem(
+      DismissDirection dismissDirection, ShoppingCardModel itemToDismiss) {
+    ShoppingCardService shoppingCardService =
+        locator.get<ShoppingCardService>();
+    if (dismissDirection == DismissDirection.endToStart) {
+      shoppingCardService.removeItemFromShoppingCard(itemToDismiss);
+    }
+  }
+
+  Widget buildSwipeActionRight() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 30),
+        alignment: Alignment.centerRight,
+        color: Colors.redAccent,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Icon(
+              size: 40,
+              Icons.delete,
+              color: Colors.white,
+            ),
+            Text(
+              "Löschen",
+              style: TextStyle(fontSize: 17, color: Colors.white),
+            )
+          ],
+        ),
+      ),
     );
   }
 
@@ -123,7 +174,9 @@ class ShoppingCardPage extends StatelessWidget {
   }
 
   Widget buildPaymentOverviewSection(BuildContext context,
-      {required String text, required String amount}) {
+      {required String text,
+      required String amount,
+      String currencyOrPercentSign = " €"}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -132,7 +185,7 @@ class ShoppingCardPage extends StatelessWidget {
           style: Theme.of(context).textTheme.titleLarge,
         ),
         Text(
-          "$amount €",
+          amount + currencyOrPercentSign,
           style: Theme.of(context).textTheme.titleLarge,
         ),
       ],

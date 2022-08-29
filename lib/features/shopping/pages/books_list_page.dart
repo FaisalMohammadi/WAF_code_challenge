@@ -61,13 +61,14 @@ class BooksListPage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
-        child: ListView.builder(
+        child: ListView.separated(
+          separatorBuilder: (context, index) => const SizedBox(
+            height: 8,
+          ),
           itemCount: BookListk.books.length,
           itemBuilder: (context, index) {
             BookModel bookItem = BookListk.books[index];
-
-            return //ShoppingCardItem(book: shoppingCardModel);
-                BookListItem(
+            return BookListItem(
               book: bookItem,
               bookListItemAddToCardButton:
                   buildBookListItemButtom(context, bookItem),

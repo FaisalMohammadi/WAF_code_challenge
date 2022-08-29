@@ -9,7 +9,8 @@ class ShoppingCardService with ChangeNotifier {
   int _shoppingCardCounter = 0;
   int _shoppingCardListItemCounter = 0;
   int get shoppingCardCounter => _shoppingCardCounter;
-  double _shoppingCardTotalAmount = 0;
+  double _shoppingCardSubTotalAmount = 0;
+  double _shoppingCardDiscountAmount = 0;
 
   List<ShoppingCardModel> _shoppingCardItems = [];
   List<BookModel> _shoppingCardItemsUnarranged = [];
@@ -29,7 +30,7 @@ class ShoppingCardService with ChangeNotifier {
     return _shoppingCardItemsUnarranged;
   }
 
-  double getShoppingCardTotalAmount() {
+  double getShoppingCardSubTotalAmount() {
     double totalAmount = 0;
     double bookPrice = 0;
     int bookAmount = 0;
@@ -40,8 +41,18 @@ class ShoppingCardService with ChangeNotifier {
 
       totalAmount += (bookPrice * bookAmount);
     }
-    _shoppingCardTotalAmount = totalAmount;
-    return _shoppingCardTotalAmount;
+    _shoppingCardSubTotalAmount = totalAmount;
+    return _shoppingCardSubTotalAmount;
+  }
+
+  // TODO rabatt rechnen
+  double getAndCountShoppingCardDiscountAmount() {
+    
+    return _shoppingCardDiscountAmount;
+  }
+
+  double getShoppingCardTotalAmount(){
+    return _shoppingCardSubTotalAmount - _shoppingCardDiscountAmount;
   }
 
   void setShoppingCardItems(ShoppingCardModel item) {
@@ -62,6 +73,8 @@ class ShoppingCardService with ChangeNotifier {
   void removeItemFromShoppingCard(ShoppingCardModel item) {
     _shoppingCardItems.removeWhere((element) => element.book == item.book);
     _shoppingCardCounter--;
+    _setPreferencesItems();
+    notifyListeners();
   }
 
   void setShoppingCardItemsUnarranged(BookModel item) {
