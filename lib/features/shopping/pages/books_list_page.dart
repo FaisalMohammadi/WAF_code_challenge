@@ -23,11 +23,6 @@ class BooksListPage extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         actions: [
-          IconButton(
-              onPressed: () {
-                AppPreferencesAndSecureStorage.emptySharedPrefs();
-              },
-              icon: Icon(Icons.delete)),
           Padding(
             padding: const EdgeInsets.only(right: 20),
             child: Badge(
